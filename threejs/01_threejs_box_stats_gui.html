@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>shader</title>
+  <style>
+  body {
+    margin: 0;
+    overflow: hidden;
+  }
+  </style>
+</head>
+
+<body>
+  <div id="container"></div>
+
+  <script type="text/javascript" src="/js/three.js"></script>
+  <script type="text/javascript" src="/js/dat.gui.js"></script>
+  <script type="text/javascript" src="/js/stats.js"></script>
+
+  <script>
+  var container;
+  var camera, scene, renderer;
+  var gui, stats;
+  var mesh;
+  var settings = {
+    camera: {
+      fov: 60,
+      near: 1,
+      far: 1000,
+      position: {
+        z: 10
+      }
+    },
+    mesh: {
+      rotationSpeed:{
+        x: 0.005,
+        y: 0.005
+      }
+    }
+  }
+
+  init();
+  animate();
+
+  function init() {
+    container = document.getElementById('container');
+
+    camera = new THREE.PerspectiveCamera(settings.camera.fov, window.innerWidth / window.innerHeight, settings.camera.near, settings.camera.far);
+    camera.position.z = settings.camera.position.z;
+
+    scene = new THREE.Scene();
+
+    var geometry = new THREE.BoxGeometry();
+    var material = new THREE.MeshNormalMaterial();
+    mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
+
+    renderer = new THREE.WebGLRenderer({antialias: true});
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    container.appendChild(renderer.domElement);
+
+    gui = new dat.GUI();
+
+    stats = new Stats();
+    document.body.appendChild(stats.dom);
+
+    onWindowResize();
+    window.addEventListener('resize', onWindowResize, false);
+  }
+
+  function onWindowResize(event) {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+    stats.update();
+
+    renderer.render(scene, camera);
+
+    mesh.rotation.x += settings.mesh.rotationSpeed.x;
+    mesh.rotation.y += settings.mesh.rotationSpeed.y;
+
+  }
+
+  </script>
+</body>
+</html>
