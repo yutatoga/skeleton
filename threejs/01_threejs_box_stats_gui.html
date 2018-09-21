@@ -25,8 +25,7 @@
   var mesh;
   var settings = {
     renderer: {
-      antialias: true,
-      toneMappingExposure: 1.0
+      antialias: true
     },
     camera: {
       fov: 60,
@@ -40,6 +39,19 @@
       rotationSpeed:{
         x: 0.005,
         y: 0.005
+      },
+      material: {
+        color: 0xffffff
+      }
+    },
+    light: {
+      ambientLight: {
+        color: 0x404040,
+        intensity: 1.0
+      },
+      pointLight: {
+        color: 0xffffff,
+        intensity: 1.0
       }
     }
   }
@@ -50,7 +62,7 @@
   function init() {
 
     // renderer
-    renderer = new THREE.WebGLRenderer({antialias: settings.renderer.toneMappingExposure});
+    renderer = new THREE.WebGLRenderer({antialias: settings.renderer.antialias});
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     container = document.getElementById('container');
@@ -62,15 +74,16 @@
     // camera
     camera = new THREE.PerspectiveCamera(settings.camera.fov, window.innerWidth / window.innerHeight, settings.camera.near, settings.camera.far);
     camera.position.z = settings.camera.position.z;
+    scene.add(camera);
 
     // light
-    scene.add(new THREE.AmbientLight(0x404040));
-    pointLight = new THREE.PointLight(0xffffff, 1);
+    scene.add(new THREE.AmbientLight(settings.light.ambientLight.color, settings.light.ambientLight.intensity));
+    pointLight = new THREE.PointLight(settings.light.pointLight.color, settings.light.pointLight.intensity);
     camera.add(pointLight);
 
     // objects
     var geometry = new THREE.BoxGeometry();
-    var material = new THREE.MeshNormalMaterial();
+    var material = new THREE.MeshPhongMaterial({color: settings.mesh.material.color});
     mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);
 
